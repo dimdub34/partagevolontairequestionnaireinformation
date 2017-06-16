@@ -6,7 +6,7 @@ This module contains the GUI
 import sys
 import logging
 from PyQt4 import QtGui, QtCore
-from util.utili18n import le2mtrans
+import random
 import partagevolontairequestionnaireinformationParams as pms
 import partagevolontairequestionnaireinformationTexts as texts_PVQI
 from client.cltgui.cltguiwidgets import WExplication
@@ -86,7 +86,22 @@ class DQuestionnaireInformation(QtGui.QDialog):
         buttons.accepted.connect(self.accept)
         layout.addWidget(buttons)
 
+        if self.automatique:
+            self.radio_group_q1.button(random.choice(
+                pms.ECHELLE_AUGMENTATION.keys())).setChecked(True)
+            for gb in self.group_buttons:
+                gb.button(random.choice(
+                    pms.ECHELLE_ACCORD.keys())).setChecked(True)
+            self.text_edit.setText(u"Texte automatique")
+            self.timer = QtCore.QTimer()
+            self.timer.timeout.connect(self.accept)
+            self.timer.start(7000)
+
     def accept(self):
+        try:
+            self.timer.stop()
+        except AttributeError:
+            pass
         try:
             if self.radio_group_q1.checkedId() == -1:
                 raise ValueError(u"Il y a au moins une question à "
@@ -108,7 +123,8 @@ class DQuestionnaireInformation(QtGui.QDialog):
                          "PVQI_eviter_gain_negatif"]
             for i, e in enumerate(self.enonces):
                 reponses[variables[i]] = self.group_buttons[i].checkedId()
-            reponses["PVQI_autre"] = self.text_edit.toPlainText()
+            reponses["PVQI_autre"] = unicode(
+                self.text_edit.toPlainText().toUtf8(), "utf-8")
             if not self.automatique:
                 confirmation = QtGui.QMessageBox.question(
                     self, u"Confirmation", u"Vous confirmez vos réponses?",
