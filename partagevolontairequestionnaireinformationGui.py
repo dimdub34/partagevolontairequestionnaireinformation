@@ -64,7 +64,7 @@ class DQuestionnaireInformation(QtGui.QDialog):
             hlayouts.append(QtGui.QHBoxLayout())
             for k, v in sorted(pms.ECHELLE_ACCORD.items()):
                 radio = QtGui.QRadioButton(v)
-                self.group_buttons[-1].addButton(radio)
+                self.group_buttons[-1].addButton(radio, k)
                 hlayouts[-1].addWidget(radio)
             hlayouts[-1].addSpacerItem(
             QtGui.QSpacerItem(20, 5, QtGui.QSizePolicy.Expanding,
@@ -88,10 +88,10 @@ class DQuestionnaireInformation(QtGui.QDialog):
 
         if self.automatique:
             self.radio_group_q1.button(random.choice(
-                pms.ECHELLE_AUGMENTATION.keys())).setChecked(True)
+                pms.ECHELLE_AUGMENTATION.keys())).click()
             for gb in self.group_buttons:
                 gb.button(random.choice(
-                    pms.ECHELLE_ACCORD.keys())).setChecked(True)
+                    pms.ECHELLE_ACCORD.keys())).click()
             self.text_edit.setText(u"Texte automatique")
             self.timer = QtCore.QTimer()
             self.timer.timeout.connect(self.accept)
