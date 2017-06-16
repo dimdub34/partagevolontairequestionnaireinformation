@@ -4,21 +4,15 @@ import logging
 import random
 
 from twisted.internet import defer
-from twisted.spread import pb
 from client.cltremote import IRemote
-from client.cltgui.cltguidialogs import GuiRecapitulatif
 import partagevolontairequestionnaireinformationParams as pms
-from partagevolontairequestionnaireinformationGui import GuiDecision
-import partagevolontairequestionnaireinformationTexts as texts_PVQI
+from partagevolontairequestionnaireinformationGui import DQuestionnaireInformation
 
 
 logger = logging.getLogger("le2m")
 
 
 class RemotePVQI(IRemote):
-    """
-    Class remote, remote_ methods can be called by the server
-    """
     def __init__(self, le2mclt):
         IRemote.__init__(self, le2mclt)
 
@@ -40,48 +34,25 @@ class RemotePVQI(IRemote):
         """
         logger.info(u"{} Period {}".format(self._le2mclt.uid, period))
         self.currentperiod = period
-        if self.currentperiod <= 1:
-            del self.histo[:]
-            self.histo_vars = texts_PVQI.get_histo_vars()
-            self.histo.append(texts_PVQI.get_histo_head())
 
     def remote_display_decision(self):
-        """
-        Display the decision screen
-        :return: deferred
-        """
         logger.info(u"{} Decision".format(self._le2mclt.uid))
         if self._le2mclt.simulation:
-            decision = \
-                random.randrange(
-                    pms.DECISION_MIN,
-                    pms.DECISION_MAX + pms.DECISION_STEP,
-                    pms.DECISION_STEP)
-            logger.info(u"{} Send back {}".format(self._le2mclt.uid, decision))
-            return decision
-        else: 
-            defered = defer.Deferred()
-            ecran_decision = GuiDecision(
-                defered, self._le2mclt.automatique,
-                self._le2mclt.screen, self.currentperiod, self.histo)
-            ecran_decision.show()
-            return defered
-
-    def remote_display_summary(self, period_content):
-        """
-        Display the summary screen
-        :param period_content: dictionary with the content of the current period
-        :return: deferred
-        """
-        logger.info(u"{} Summary".format(self._le2mclt.uid))
-        self.histo.append([period_content.get(k) for k in self.histo_vars])
-        if self._le2mclt.simulation:
-            return 1
+            reponses = dict()
+            reponses["PVQI_modification_prelevement"] = random.choice(
+                pms.ECHELLE_AUGMENTATION.keys())
+            variables = ["PVQI_meme_prelevement", "PVQI_augmenter_mon_gain",
+                         "PVQI_diminuer_couts_prelevements",
+                         "PVQI_eviter_gain_negatif"]
+            for v in variables:
+                reponses[v] = random.choice(pms.ECHELLE_ACCORD.keys())
+            reponses["PVQI_autre"] = u"Texte simulation"
+            logger.info(u"{} Send back {}".format(self._le2mclt.uid, reponses))
+            return reponses
         else:
             defered = defer.Deferred()
-            ecran_recap = GuiRecapitulatif(
-                defered, self._le2mclt.automatique, self._le2mclt.screen,
-                self.currentperiod, self.histo,
-                texts_PVQI.get_text_summary(period_content))
-            ecran_recap.show()
+            ecran_decision = DQuestionnaireInformation(
+                defered, self._le2mclt.automatique,
+                self._le2mclt.screen)
+            ecran_decision.show()
             return defered

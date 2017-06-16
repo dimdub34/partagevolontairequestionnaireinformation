@@ -22,27 +22,8 @@ except (AttributeError, IOError):
     trans_PVQI = lambda x: x  # if there is an error, no translation
 
 
-def get_histo_vars():
-    return ["PVQI_period", "PVQI_decision",
-            "PVQI_periodpayoff",
-            "PVQI_cumulativepayoff"]
-
-
-def get_histo_head():
-    return [le2mtrans(u"Period"), le2mtrans(u"Decision"),
-             le2mtrans(u"Period\npayoff"), le2mtrans(u"Cumulative\npayoff")]
-
-
 def get_text_explanation():
-    return trans_PVQI(u"Explanation text")
-
-
-def get_text_label_decision():
-    return trans_PVQI(u"Decision label")
-
-
-def get_text_summary(period_content):
-    txt = trans_PVQI(u"Summary text")
-    return txt
+    return u"Merci de répondre aux questions ci-dessous. Le traitement des " \
+           u"réponses sera totalement anonyme."
 
 
