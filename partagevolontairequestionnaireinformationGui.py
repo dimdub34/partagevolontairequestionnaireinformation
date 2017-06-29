@@ -52,8 +52,8 @@ class DQuestionnaireInformation(QtGui.QDialog):
             u"Je souhaitais avoir le même niveau de prélèvement que les autres",
             u"Je souhaitais augmenter mon gain",
             u"Je souhaitais diminuer les coûts de prélèvement",
-            u"Le groupe a augmenté son prélèvement, j’ai dû modifier mon \n"
-            u"prélèvement de façon à ne pas avoir de gain négatif"
+            u"Le groupe a augmenté son prélèvement, j’ai dû diminuer mon \n"
+            u"prélèvement de façon à limiter la perte de gains"
         ]
         row_number = 2
         self.group_buttons = list()
